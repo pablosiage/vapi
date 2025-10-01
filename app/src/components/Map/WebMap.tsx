@@ -1023,7 +1023,7 @@ out geom;`;
           }}
           activeOpacity={0.7}
         >
-          <Ionicons name="locate" size={20} color="#fff" />
+          <Ionicons name="locate" size={28} color="#fff" />
         </TouchableOpacity>
       </View>
 

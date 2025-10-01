@@ -6,6 +6,8 @@ import { WebMap } from '../components/Map/WebMap';
 import { NearestSpotButton } from '../components/UI/NearestSpotButton';
 import { ReportSpotButton } from '../components/UI/ReportSpotButton';
 import { StreetDetailView } from '../components/Map/StreetDetailView';
+import { UserAccountButton } from '../components/UI/UserAccountButton';
+import { ScoreDisplay } from '../components/UI/ScoreDisplay';
 import { useLocation } from '../hooks/useLocation';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useTheme } from '../hooks/useTheme';
@@ -23,6 +25,8 @@ export function MapScreen() {
   const [clusters, setClusters] = useState<ClusterData[]>([]);
   const [loading, setLoading] = useState(false);
   const [showStreetDetail, setShowStreetDetail] = useState(false);
+  const [userScore, setUserScore] = useState(2450); // Mock score for now
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false); // Mock login state
 
   // Load nearby reports when location changes
   const loadNearbyReports = useCallback(async () => {
@@ -137,6 +141,16 @@ export function MapScreen() {
     setShowStreetDetail(false);
   };
 
+  const handleUserAccountPress = () => {
+    if (isUserLoggedIn) {
+      console.log('🟢 Show user profile');
+      // TODO: Show user profile modal
+    } else {
+      console.log('🟢 Show login/signup modal');
+      // TODO: Show Cognito authentication modal
+    }
+  };
+
 
   if (locationError) {
     Alert.alert(
@@ -171,6 +185,14 @@ export function MapScreen() {
         />
       </View>
 
+      <View style={styles.topRightContainer}>
+        <ScoreDisplay score={userScore} />
+        <UserAccountButton
+          onPress={handleUserAccountPress}
+          isLoggedIn={isUserLoggedIn}
+        />
+      </View>
+
       <View style={styles.bottomRightContainer}>
         <ReportSpotButton
           onPress={handleReportSpotPress}
@@ -197,9 +219,18 @@ const styles = StyleSheet.create({
   },
   topContainer: {
     position: 'absolute',
-    top: 60,
+    top: 100,
     left: 0,
     right: 0,
+  },
+  topRightContainer: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    zIndex: 1000,
   },
   bottomRightContainer: {
     position: 'absolute',

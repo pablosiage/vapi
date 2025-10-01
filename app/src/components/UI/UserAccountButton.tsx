@@ -2,14 +2,14 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/useTheme';
-import { Spacing } from '../../theme';
 
-interface ReportSpotButtonProps {
+interface UserAccountButtonProps {
   onPress: () => void;
-  disabled?: boolean;
+  isLoggedIn?: boolean;
+  avatarUrl?: string;
 }
 
-export function ReportSpotButton({ onPress, disabled = false }: ReportSpotButtonProps) {
+export function UserAccountButton({ onPress, isLoggedIn = false, avatarUrl }: UserAccountButtonProps) {
   const { colors } = useTheme();
 
   return (
@@ -17,18 +17,26 @@ export function ReportSpotButton({ onPress, disabled = false }: ReportSpotButton
       style={[
         styles.button,
         {
-          backgroundColor: disabled ? colors.surfaceVariant : colors.success,
+          backgroundColor: colors.surfaceVariant,
         },
       ]}
       onPress={onPress}
-      disabled={disabled}
       activeOpacity={0.7}
     >
-      <Ionicons
-        name="add"
-        size={28}
-        color={disabled ? colors.textTertiary : colors.background}
-      />
+      {isLoggedIn && avatarUrl ? (
+        // TODO: Implement avatar image when user has one
+        <Ionicons
+          name="person"
+          size={28}
+          color={colors.accent}
+        />
+      ) : (
+        <Ionicons
+          name="person-outline"
+          size={28}
+          color={colors.text}
+        />
+      )}
     </TouchableOpacity>
   );
 }

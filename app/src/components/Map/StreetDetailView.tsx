@@ -241,7 +241,7 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
       {/* Header */}
       <View style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-          <Ionicons name="close" size={24} color={colors.text} />
+          <Ionicons name="close" size={28} color={colors.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text }]}>
           Marcar espacios libres
@@ -304,7 +304,7 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
               onPress={handleUndo}
               disabled={markedSpots.length === 0}
             >
-              <Ionicons name="arrow-undo" size={24} color={markedSpots.length === 0 ? colors.textTertiary : colors.text} />
+              <Ionicons name="arrow-undo" size={28} color={markedSpots.length === 0 ? colors.textTertiary : colors.text} />
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -316,7 +316,7 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
               onPress={handleConfirm}
               disabled={markedSpots.length === 0}
             >
-              <Ionicons name="checkmark" size={24} color={colors.background} />
+              <Ionicons name="checkmark" size={28} color={colors.background} />
               {markedSpots.length > 0 && (
                 <View style={[styles.badge, { backgroundColor: colors.background }]}>
                   <Text style={[styles.badgeText, { color: colors.success }]}>
