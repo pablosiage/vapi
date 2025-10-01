@@ -1,0 +1,31 @@
+{
+  "name": "@vapi/infra",
+  "version": "1.0.0",
+  "description": "AWS CDK infrastructure for Vapi",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "deploy": "cdk deploy --all --require-approval never",
+    "destroy": "cdk destroy --all --force",
+    "synth": "cdk synth",
+    "bootstrap": "cdk bootstrap"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigatewayv2-alpha": "^2.103.0-alpha.0",
+    "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.103.0-alpha.0",
+    "@vapi/shared": "workspace:*",
+    "aws-cdk-lib": "^2.103.0",
+    "constructs": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/node": "^20.0.0",
+    "aws-cdk": "^2.103.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^5.0.0"
+  }
+}
