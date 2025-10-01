@@ -1078,9 +1078,9 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   centerButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: '#1a1a1a',
     borderWidth: 1,
     borderColor: '#333',

@@ -55,13 +55,13 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
     },
   });
 
-  // Initialize map when component mounts
+  // Initialize map when component mounts - ONLY ONCE
   useEffect(() => {
     let isMounted = true;
 
     const initializeMap = async () => {
       try {
-        if (typeof window === 'undefined' || !mapContainer.current || !userLocation) return;
+        if (typeof window === 'undefined' || !mapContainer.current || !userLocation || map.current) return;
 
         // Check if MapLibre is already loaded
         if (!window.maplibregl) {
@@ -88,7 +88,7 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
         // Wait a bit for the library to be available
         await new Promise(resolve => setTimeout(resolve, 100));
 
-        if (!isMounted || !window.maplibregl || !mapContainer.current) return;
+        if (!isMounted || !window.maplibregl || !mapContainer.current || map.current) return;
 
         console.log('🗺️ Initializing street detail map for location:', userLocation);
         console.log('📦 Map container element:', mapContainer.current);
@@ -99,21 +99,65 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
           clientHeight: mapContainer.current?.clientHeight
         });
 
+        // Force resize after creation
+        setTimeout(() => {
+          if (map.current) {
+            console.log('🔄 Forcing map resize...');
+            map.current.resize();
+          }
+        }, 200);
+
         map.current = new window.maplibregl.Map({
           container: mapContainer.current,
           attributionControl: false,
-          style: 'https://demotiles.maplibre.org/style.json',
+          style: {
+            version: 8,
+            sources: {
+              'osm': {
+                type: 'raster',
+                tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                tileSize: 256,
+                attribution: ''
+              }
+            },
+            layers: [
+              {
+                id: 'background',
+                type: 'background',
+                paint: {
+                  'background-color': '#0a0a0a'
+                }
+              },
+              {
+                id: 'osm-tiles',
+                type: 'raster',
+                source: 'osm',
+                paint: {
+                  'raster-opacity': 0.7,
+                  'raster-contrast': -0.3,
+                  'raster-brightness-min': 0.2,
+                  'raster-brightness-max': 0.5,
+                  'raster-saturation': -0.9,
+                  'raster-hue-rotate': 0
+                }
+              }
+            ]
+          },
           center: [userLocation.longitude, userLocation.latitude],
-          zoom: 19, // Very high zoom for street detail
+          zoom: 18, // High zoom for street detail
           pitch: 0,
           bearing: 0,
           scrollZoom: false, // Disable zoom
           boxZoom: false, // Disable box zoom
           dragRotate: false, // Disable rotation
-          dragPan: false, // Disable panning
+          dragPan: true, // Allow limited panning
           keyboard: false, // Disable keyboard navigation
           doubleClickZoom: false, // Disable double click zoom
           touchZoomRotate: false, // Disable touch zoom/rotate
+          maxBounds: [
+            [userLocation.longitude - 0.001, userLocation.latitude - 0.001], // SW corner (~100m)
+            [userLocation.longitude + 0.001, userLocation.latitude + 0.001]  // NE corner (~100m)
+          ]
         });
 
         map.current.on('load', () => {
@@ -121,6 +165,16 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
           console.log('🗺️ Map instance:', map.current);
           console.log('🎯 Map center:', map.current.getCenter());
           console.log('🔍 Map zoom:', map.current.getZoom());
+          
+          // Force resize to make sure tiles render
+          setTimeout(() => {
+            if (map.current && isMounted) {
+              console.log('🔄 Final resize after load...');
+              map.current.resize();
+              map.current.redraw();
+            }
+          }, 100);
+          
           if (isMounted) {
             setMapLoaded(true);
           }
@@ -143,7 +197,10 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
       }
     };
 
-    initializeMap();
+    // Only initialize if we have userLocation and haven't initialized yet
+    if (userLocation && !map.current) {
+      initializeMap();
+    }
 
     return () => {
       isMounted = false;
@@ -152,7 +209,7 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
         map.current = null;
       }
     };
-  }, [userLocation]);
+  }, []); // Empty dependency array - only run once on mount
 
   const addSpotAtPosition = (x: number, y: number) => {
     if (!map.current || !userLocation) return;
@@ -222,7 +279,6 @@ export function StreetDetailView({ streetName, userLocation, onClose, onConfirm,
                   left: spot.x - 8,
                   top: spot.y - 8,
                   backgroundColor: colors.success,
-                  borderColor: colors.background,
                 },
               ]}
             />
@@ -351,7 +407,6 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    borderWidth: 2,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
